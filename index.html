@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Design Board 2nd Check</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f5f2;--card:#fff;--tx:#1d1d1b;--mu:#6b6a66;--bd:#dedcd6;--f:#c62828;--fb:#fdeaea;--w:#b26a00;--wb:#fff3dc;--p:#2e7d32;--pb:#e6f4e7;--n:#777;--nb:#eee;--ac:#1d1d1b}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--card:#212120;--tx:#efeee9;--mu:#a3a29c;--bd:#3a3a37;--f:#ff8a80;--fb:#3a1d1d;--w:#ffc266;--wb:#3a2c12;--p:#81c784;--pb:#1b301c;--n:#aaa;--nb:#2c2c2a;--ac:#efeee9}}
+:root[data-theme="dark"]{--bg:#161615;--card:#212120;--tx:#efeee9;--mu:#a3a29c;--bd:#3a3a37;--f:#ff8a80;--fb:#3a1d1d;--w:#ffc266;--wb:#3a2c12;--p:#81c784;--pb:#1b301c;--n:#aaa;--nb:#2c2c2a;--ac:#efeee9}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 "Century Gothic",system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;margin:0 0 4px;font-weight:600}h2{font-size:17px;margin:26px 0 10px}p{margin:.3em 0}.mu{color:var(--mu);font-size:13px}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-top:14px}
+#drop{border:2px dashed var(--bd);border-radius:12px;padding:26px;text-align:center;cursor:pointer}#drop.on{border-color:var(--ac)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+label{display:block;font-size:12px;color:var(--mu);margin-bottom:3px}
+input,select{width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+button{background:var(--ac);color:var(--bg);border:0;border-radius:10px;padding:11px 20px;font:inherit;font-weight:600;cursor:pointer}button.g{background:none;color:var(--tx);border:1px solid var(--bd)}
+.auto{outline:2px solid var(--w)}
+button:disabled{opacity:.4;cursor:default}
+.ban{border-radius:12px;padding:18px;margin-top:18px;font-size:20px;font-weight:600}
+.ban.F{background:var(--fb);color:var(--f)}.ban.W{background:var(--wb);color:var(--w)}.ban.P{background:var(--pb);color:var(--p)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.chip{padding:4px 12px;border-radius:99px;font-size:13px;font-weight:600}
+.chip.F,.b.F{background:var(--fb);color:var(--f)}.chip.W,.b.W{background:var(--wb);color:var(--w)}.chip.P,.b.P{background:var(--pb);color:var(--p)}.chip.N,.b.N{background:var(--nb);color:var(--n)}
+.card{display:flex;gap:12px;background:var(--card);border:1px solid var(--bd);border-left:5px solid var(--n);border-radius:10px;padding:12px 14px;margin:8px 0}
+.card.F{border-left-color:var(--f)}.card.W{border-left-color:var(--w)}.card.P{border-left-color:var(--p)}
+.b{flex:none;height:22px;padding:0 9px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.04em;line-height:22px}
+.fix{color:var(--f);font-size:14px}
+details{margin-top:10px}summary{cursor:pointer;font-weight:600;padding:6px 0}
+table{border-collapse:collapse;width:100%;font-size:13px;display:block;overflow-x:auto}td,th{border-bottom:1px solid var(--bd);padding:5px 8px;text-align:left;vertical-align:top}
+@media print{.noprint{display:none}body{background:#fff}}
+</style></head><body><main>
+<h1>design board 2nd check</h1>
+<p class="mu">Upload the design board PDF. The checker reads the text, does the exact matching and maths in code, and tells you what to fix and what a person still needs to look at. It never guesses: anything it cannot confirm is marked CHECK.</p>
+
+<div class="box noprint"><b>1. design board (pdf)</b>
+<div id="drop" style="margin-top:10px">Drop the PDF here or click to choose<br><span class="mu" id="fn">no file chosen</span></div>
+<input type="file" id="file" accept="application/pdf" hidden></div>
+
+<div class="box noprint"><b>2. brief / quote (optional, recommended)</b>
+<p class="mu">Upload the brief and/or quote PDFs, or paste the text. The checker reads it and pre-fills the fields below. Highlighted fields were read from the brief, so confirm them.</p>
+<input type="file" id="bf" accept="application/pdf" multiple style="margin:8px 0">
+<textarea id="bt" rows="3" placeholder="…or paste brief text here" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea>
+<p style="margin-top:8px"><button class="g" id="rb">read brief</button></p><div id="bs" class="mu"></div></div>
+
+<div class="box noprint"><b>3. brief / quote details</b> <span class="mu">(check or complete; blank = "cannot verify" warning)</span>
+<div class="grid" style="margin-top:10px">
+<div><label>specifier / project name</label><input id="b_spec" placeholder="cathy axford / axford residence"></div>
+<div><label>rug design name</label><input id="b_design" placeholder="scartree"></div>
+<div><label>application</label><select id="b_app"><option value="">not supplied</option><option>residential</option><option>commercial</option></select></div>
+<div><label>installation</label><select id="b_inst"><option value="">not supplied</option><option>freelaid</option><option>inlaid</option></select></div>
+<div><label>quality / fibre (brief)</label><input id="b_fibre" placeholder="nz wool + artsilk"></div>
+<div><label>project type</label><select id="b_type"><option value="">not supplied</option><option>SALL</option><option>MWI</option><option>NEPJW</option></select></div>
+<div><label>colour pom codes (comma separated)</label><input id="b_poms" placeholder="leave blank if none"></div>
+<div><label>Singapore project?</label><select id="b_sg"><option value="">not supplied</option><option value="yes">yes</option><option value="no">no</option></select></div>
+<div><label>cut for airfreight?</label><select id="b_air"><option value="">not supplied</option><option value="yes">yes</option><option value="no">no</option></select></div>
+<div><label>ombre?</label><select id="b_omb"><option value="">not supplied</option><option value="yes">yes</option><option value="no">no</option></select></div>
+<div><label>irregular / non-rectangular shape?</label><select id="b_shape"><option value="">not supplied</option><option value="yes">yes</option><option value="no">no</option></select></div>
+</div></div>
+<p class="noprint" style="margin-top:16px"><button id="go" disabled>run 2nd check</button> <button class="g" id="pr" style="display:none" onclick="print()">print / save as pdf</button></p>
+<p class="mu" id="st"></p>
+<div id="out"></div>
+
+<script>
+const CODE=/^(?:ARS\s)?[A-Z]{1,3}\d{2,4}(?:-\d{1,3})?$/,CODEG=/(?:ARS\s)?[A-Z]{1,3}\d{2,4}(?:-\d{1,3})?/g;
+const IND={"scartree country":"Cara Shields","ora scartree":"Cara Shields","ochre pathways":"Cara Shields","ora sweet rain":"Lizzy Stageman","marrunga yubaa - purple rain":"Lizzy Stageman","nganhayung - ourselves":"Lizzy Stageman"};
+const MON=["january","february","march","april","may","june","july","august","september","october","november","december"];
+const n=v=>(v||"").toLowerCase().replace(/\s+/g," ").trim(), esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const nm=s=>n(s).replace(/[^a-z0-9]+/g," ").trim(),key=s=>(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+const fib=s=>{s=n(s);return["wool","artsilk","nettle","hemp","cactus"].filter(k=>k==="artsilk"?/art-?silk/.test(s):s.includes(k))};
+const same=(a,b)=>a.length===b.length&&a.every(x=>b.includes(x));
+
+function briefFields(t){
+ const f={},g=re=>{const m=t.match(re);return m?m[1].trim():null};
+ const sp=g(/(?:specifier|designer)\s*[:\-]\s*([^\n]+)/i),pj=g(/(?:project|client)(?:\s*name)?\s*[:\-]\s*([^\n]+)/i),ds=g(/(?:rug\s*)?design(?:\s*name)?\s*[:\-]\s*([^\n]+)/i);
+ if(sp&&pj)f.spec=n(sp)+" / "+n(pj);
+ if(ds)f.design=n(ds);
+ const ty=["SALL","MWI","NEPJW"].filter(k=>new RegExp("\\b"+k+"\\b").test(t));if(ty.length===1)f.type=ty[0];
+ const co=/commercial/i.test(t),re=/residential/i.test(t);if(co!==re)f.app=co?"commercial":"residential";
+ const il=/\binlaid\b/i.test(t),fl=/free-?\s?laid/i.test(t);if(il!==fl)f.inst=il?"inlaid":"freelaid";
+ const fb=g(/(?:quality|fibre|composition|material)[^\n:]*[:\-]\s*([^\n]+)/i);if(fb)f.fibre=n(fb);
+ if(/air\s?-?freight/i.test(t))f.air="yes";
+ if(/ombre/i.test(t))f.omb="yes";
+ if(/(?:deliver|ship|install|project|site|location)[^\n.]{0,60}singapore/i.test(t))f.sg="yes";
+ if(/irregular\s+shape|non-?rectangular/i.test(t))f.shape="yes";
+ const pm=g(/poms?[^\n:]*[:\-]\s*([^\n]+)/i);if(pm)f.poms=pm;
+ return f}
+
+function parse(items,W=595,H=842){
+ const T=items.map(i=>i.s).join(" "),D={T,items},rows=[];
+ items.filter(i=>i.y>H*.85&&i.x<W*.62).sort((a,b)=>b.y-a.y||a.x-b.x).forEach(i=>{const r=rows[rows.length-1];r&&Math.abs(r.y-i.y)<3?r.t.push(i):rows.push({y:i.y,t:[i]})});
+ const TT=rows.map(r=>r.t.sort((a,b)=>a.x-b.x).map(q=>q.s).join(" ")).join(" ");
+ const RX=/date\s+(.+?)\s+project specifier\/name\s+(.+?)\s+rug area \/ design\s+(.+?)\s+rug application \/ installation\s+(.+?)\s+rug quantity & dimensions\s+(.+?)\s+quality & rug finish\s+(.+?)\s+rug pile height and weight\s+(.+?)\s+scale\s+(.+?)\s+db \/ sc\s*(.*?)\s*(?=CUSTOM|$)/,m=TT.match(RX)||T.match(RX);
+ D.top=m?{date:m[1],spec:m[2],design:m[3],app:m[4],dims:m[5],qual:m[6],pile:m[7],scale:m[8],dbsc:m[9]}:null;
+ const Pi=items.find(i=>/^colour palette$/i.test(i.s)),Si=items.find(i=>/^design colour$/i.test(i.s));
+ D.pal=[];
+ if(Pi&&Si){const rg=items.filter(q=>q.y<Pi.y&&q.y>Si.y&&q.x>=Pi.x-25);
+  rg.filter(q=>CODE.test(q.s)).forEach(c=>{let nI=null,bd=90;rg.forEach(q=>{const d=q.y-c.y,k=d+2*Math.abs(q.x-c.x);if(!CODE.test(q.s)&&d>0&&d<40&&k<bd){bd=k;nI=q}});if(nI)D.pal.push({name:n(nI.s),code:c.s,y:c.y,x:c.x})});
+  D.pal.sort((a,b)=>b.y-a.y||a.x-b.x)}
+ const st=[];items.forEach((it,i)=>{if(Si&&it.y<Si.y&&/area comprised of/i.test(it.s))st.push(i)});
+ const TERM=/^(Please Note|Signed artwork|product variation|CUSTOM DESIGN|colour palette|©|australia|Tappeti)/i;
+ const used=new Set(),hd=st.map(s=>items[s]);
+ const own=q=>{let best=null,bd=60;hd.forEach(h=>{const d=h.y-q.y;if(Math.abs(h.x-q.x)<30&&d>=-2&&d<bd){bd=d;best=h}});return best};
+ D.areas=st.map((s,k)=>{const it=items[s];
+  const b=items.filter((q,j)=>j===s||(!hd.includes(q)&&!TERM.test(q.s)&&!/^\d{1,2}$/.test(q.s)&&own(q)===it)).sort((a,b)=>b.y-a.y||a.x-b.x).map(i=>i.s).join(" ");
+  let num=null,bd=1e9;items.forEach((q,j)=>{if(/^\d{1,2}$/.test(q.s)&&!used.has(j)){const dx=it.x-q.x,dy=Math.abs(it.y-q.y);if(dx>0&&dx<bd&&dy<30){bd=dx;num=j}}});
+  if(num!==null)used.add(num);
+  const fibres=[...b.matchAll(/(\d+(?:\.\d+)?)%\s+([a-z ]+?)\s+((?:ARS\s)?[A-Z]{1,3}\d{2,4}(?:-\d{1,3})?)\s*\(([^)]+)\)/g)].map(x=>({pct:+x[1],name:n(x[2]),code:x[3],fibre:n(x[4])}));
+  const pl=b.match(/(\d+)\s*mm\s+finished\s+(cut|loop)\s+pile/i);
+  return{num:num!==null?+items[num].s:null,text:b,fibres,pile:pl?{mm:+pl[1],type:pl[2].toLowerCase()}:null};});
+ const ci=items.map((q,j)=>({q,j})).filter(o=>/^\d{1,2}$/.test(o.q.s)&&!used.has(o.j)&&o.q.x>200);
+ const g={};ci.forEach(o=>{const k=Math.round(o.q.x/6);(g[k]=g[k]||[]).push(o.q)});
+ const big=Object.values(g).sort((a,b)=>b.length-a.length)[0]||[];
+ D.ints=items.filter(i=>/^\d{1,2}$/.test(i.s)).map(i=>+i.s);
+ D.callouts=big.sort((a,b)=>b.y-a.y).map(q=>+q.s);
+ return D}
+
+function run(D,B,fname){
+ const R=[],A=(s,t,m,x)=>R.push({s,t,m,x}),H=D.top,T=D.T,ar=D.areas;
+ const cmp=(t,bs,bd,lbl)=>!bs?A("W",t,"Cannot verify against brief – "+lbl+" not entered.")
+  :(nm(bd).includes(nm(bs))||nm(bs).includes(nm(bd)))?A("P",t,"Board matches brief: "+esc(bd))
+  :A("F",t,`Board says “${esc(bd)}” but brief says “${esc(bs)}”.`,"Correct the board to match the brief.");
+ if(!H){A("F","Top note","The checker could not read the top note (date, specifier, design…). Check the PDF is a text-based board.");}
+ const need=["spec","design","app","inst","fibre","type"].filter(k=>!B[k]);
+ need.length===6?A("W","#1 Brief / quote cross-check","No brief or quote details were entered, so every brief-dependent item below is marked CHECK.")
+  :need.length?A("W","#1 Brief / quote cross-check","Brief details are incomplete (missing: "+need.join(", ")+"). Items that depend on them are marked CHECK.")
+  :A("P","#1 Brief / quote cross-check","All key brief details were entered and compared with the board (items #5–#7, #10, #12, #20).");
+ // 2 filename
+ const fm=fname.match(/^([^_]+)_([^_]+)_(.+)_(\d{6})\.pdf$/i);let bd6=null;
+ if(H){const d=H.date.match(/(\d{1,2})(?:st|nd|rd|th)?\s+([a-z]+)\s+(\d{4})/i),mi=d?MON.indexOf(d[2].toLowerCase()):-1;
+  if(d&&mi>=0)bd6=d[3].slice(2)+String(mi+1).padStart(2,"0")+d[1].padStart(2,"0");}
+ if(!fm)A("F","#2 File name","“"+esc(fname)+"” does not follow designer_client_designname_date.pdf.","Rename e.g. designer_client_designname_yymmdd.pdf");
+ else{const dv=+fm[4].slice(2,4)>=1&&+fm[4].slice(2,4)<=12&&+fm[4].slice(4)>=1&&+fm[4].slice(4)<=31;
+  if(!dv)A("F","#2 File name","Date part “"+fm[4]+"” is not a valid yymmdd date.");
+  else if(bd6&&bd6!==fm[4])A("F","#2 File name",`Filename date ${fm[4]} does not match board date (${bd6}).`,"Update the filename or the board date.");
+  else A("P","#2 File name","Format OK (designer "+esc(fm[1])+", client "+esc(fm[2])+", design "+esc(fm[3])+") and date "+fm[4]+" matches the board."+(fm[3].includes("_")?" Note: extra segment in the name – confirm it is intended.":""));}
+ // 3 lowercase
+ const okW=/^(CUSTOM|DESIGN|SPECIFICATION|BOARD|PAGE)$/,bad=[];
+ D.items.forEach(i=>{const t=i.s.replace(CODEG,"").replace(/\bA\d\b/g,"");(t.match(/\b[A-Z]{3,}\b/g)||[]).forEach(w=>{if(!okW.test(w))bad.push(i.s)})});
+ const zones=[H?[H.date,H.spec,H.design,H.app,H.dims,H.qual,H.pile,H.scale].join(" "):"",...D.pal.map(p=>p.name),...ar.map(a=>a.text)].join(" ").replace(CODEG,"").replace(/\bA\d\b/g,"");
+ const caps=zones.match(/[A-Z]/g);
+ if(bad.length||caps)A("F","#3 Lower case","Uppercase found: "+[...new Set(bad)].map(s=>"“"+esc(s)+"”").join(", ")+(caps?" (capital letters inside the top note / colour panels)":"")+". Only the board title and colour codes may be uppercase.","Change to lower case.");
+ else A("P","#3 Lower case","No stray uppercase in the top note, palette or colour panels.");
+ // 4 date
+ if(!H||!bd6)A("F","#4 Date in top note","Date is missing or not in a readable “7th august 2026” format.");
+ else if(fm&&fm[4]!==bd6)A("F","#4 Date in top note","Date does not match the filename.");
+ else A("P","#4 Date in top note","Date “"+esc(H.date)+"” present and matches the filename."+" (Quote/brief date not checked.)");
+ // 5-7
+ cmp("#5 Designer / client details",B.spec,B.spec,"specifier/project");R.pop();
+ cmp("#5 Designer / client details",B.spec,H?H.spec:"","specifier/project");
+ R.push(...[]);
+ const c6=B.design?(H&&nm(H.design).includes(nm(B.design))):null;
+ if(!B.design)A("W","#6 Rug design name","Cannot verify against brief – design name not entered. Board says “"+esc(H?H.design:"")+"”.");
+ else c6?A("P","#6 Rug design name","Board design name contains the brief name."):A("F","#6 Rug design name",`Board says “${esc(H?H.design:"")}”, brief says “${esc(B.design)}”.`,"Correct the design name.");
+ const bap=[B.app,B.inst].filter(Boolean);
+ if(bap.length<2)A("W","#7 Application / installation","Cannot verify against brief – "+(bap.length?"one field":"both fields")+" not entered. Board says “"+esc(H?H.app:"")+"”.");
+ else nm(H&&H.app).includes(nm(B.app))&&nm(H.app).includes(nm(B.inst))?A("P","#7 Application / installation","Matches brief ("+B.app+" / "+B.inst+")."):A("F","#7 Application / installation",`Board says “${esc(H?H.app:"")}”, brief says ${B.app} / ${B.inst}.`,"Correct the board.");
+ // 8 codes
+ const pc=D.pal.map(p=>p.code),sc=ar.flatMap(a=>a.fibres.map(f=>f.code)),miss=[...new Set(pc)].filter(c=>!sc.includes(c)),extra=[...new Set(sc)].filter(c=>!pc.includes(c)),dup=pc.filter((c,i)=>pc.indexOf(c)!==i);
+ const mism=[];ar.forEach(a=>a.fibres.forEach(f=>{const p=D.pal.find(p=>p.name===f.name);if(p&&p.code!==f.code)mism.push(`area ${a.num}: ${f.name} is ${f.code} but palette says ${p.code}`)}));
+ if(!pc.length||!sc.length)A("W","#8 Colour codes","The checker could not read the palette or colour panels. Compare codes by eye.");
+ else if(miss.length||extra.length||dup.length||mism.length)A("F","#8 Colour codes",[miss.length&&"In palette but never used: "+miss.join(", "),extra.length&&"Used in a panel but not in palette: "+extra.join(", "),dup.length&&"Duplicated in palette: "+dup.join(", "),...mism].filter(Boolean).join(" · "),"Make palette and panel codes identical, character for character.");
+ else A("P","#8 Colour codes",`All ${pc.length} palette codes appear exactly in the panels and every panel code is in the palette (both directions).`);
+ // 9 poms
+ if(!B.poms)A("N","#9 Colour pom codes","No pom information in the brief.");
+ else{const pk=pc.map(key),bp=B.poms.split(/[,\n]/).map(key).filter(Boolean),a=bp.filter(c=>!pk.includes(c)),b=pc.filter(c=>!bp.includes(key(c)));
+  a.length||b.length?A("F","#9 Colour pom codes","Brief codes not on board: "+(a.join(", ")||"none")+" · Board codes not in brief: "+(b.join(", ")||"none"),"Reconcile with the brief."):A("P","#9 Colour pom codes","Brief codes match the palette (spaces inside codes ignored).")}
+ // 10 MWI
+ if(!B.type)A("W","#10 MWI","MWI status can’t be determined – project type not entered.");
+ else if(B.type!=="MWI")A("N","#10 MWI","Project type is "+B.type+", not MWI.");
+ else{const o=[...new Set(pc)].filter(c=>!/^(PL|WL|NY|DP)/.test(c));o.length?A("W","#10 MWI","MWI project but these codes aren’t MWI codes (PL/WL/NY/DP): "+o.join(", ")):A("P","#10 MWI","All codes use MWI prefixes.")}
+ // 11 colour numbers & artwork markers
+ const nums=ar.map(a=>a.num);
+ if(!ar.length)A("W","#11 Colour numbers & artwork markers","Could not read the design colour panels.");
+ else{const ok=nums.filter(x=>x!==null),dp=[...new Set(ok.filter((x,i)=>ok.indexOf(x)!==i))],cnt=k=>D.ints.filter(x=>x===k).length;
+  const nomark=ok.filter(k=>cnt(k)<2),extra=[...new Set(D.ints.filter(x=>!ok.includes(x)))];
+  const f=[];if(nums.includes(null))f.push("a colour panel has no readable number");if(dp.length)f.push("number(s) used twice in panels: "+dp.join(", "));if(extra.length)f.push("artwork marker(s) with no colour panel: "+extra.join(", "));
+  if(f.length)A("F","#11 Colour numbers & artwork markers",f.join(" · "),"Every artwork marker needs a matching colour panel and every panel a unique number.");
+  else if(nomark.length)A("W","#11 Colour numbers & artwork markers","No artwork marker text found for colour(s): "+nomark.join(", ")+". Look at the artwork to confirm each has a number and arrow.");
+  else A("P","#11 Colour numbers & artwork markers",`All ${ok.length} colours have a panel and a numbered marker on the artwork (number order is not enforced). Whether each arrow points to the right area needs a visual check.`)}
+ // 12 finish
+ const tf=fib(H?H.qual:""),pf=[...new Set(ar.flatMap(a=>a.fibres.map(f=>fib(f.fibre)[0]).filter(Boolean)))],bf=fib(B.fibre);
+ if(!same(tf,pf))A("F","#12 Rug finish",`Top note says [${tf.join(", ")||"none"}] but panels say [${pf.join(", ")||"none"}].`,"Make the top note and panels agree.");
+ else if(!B.fibre)A("W","#12 Rug finish",`Top note and panels agree ([${pf.join(", ")}]) but cannot verify against brief – not entered.`);
+ else same(bf,tf)?A("P","#12 Rug finish","Brief, top note and panels all say "+tf.join(" + ")+"."):A("F","#12 Rug finish",`Brief says [${bf.join(", ")}] but board says [${tf.join(", ")}].`,"Finish mismatch – correct the board or brief.");
+ // 13 pile
+ const np=ar.filter(a=>!a.pile).map(a=>a.num);
+ if(!ar.length)A("W","#13 Pile heights","Could not read panels.");
+ else if(np.length)A("F","#13 Pile heights","No pile height on area(s): "+np.join(", "),"Add the pile height to each area.");
+ else{const ts=(H?H.pile:"").toLowerCase(),pt=[...new Set(ar.map(a=>a.pile.type))],mis=pt.filter(t=>!ts.includes(t)),mm=[...new Set(ar.map(a=>a.pile.mm))];
+  mis.length?A("W","#13 Pile heights","All areas have a pile height, but the top note doesn’t mention: "+mis.join(", ")+" pile."):A("P","#13 Pile heights",`All ${ar.length} areas specify pile height (${mm.join("mm, ")}mm) and the top note covers cut/loop.`)}
+ // 14 fibre %
+ const pb=ar.map(a=>{const s=a.fibres.reduce((t,f)=>t+f.pct,0);return!a.fibres.length?`area ${a.num}: no fibre readable`:s!==100?`area ${a.num}: totals ${s}%`:a.fibres.some(f=>!f.fibre)?`area ${a.num}: fibre not stated`:null}).filter(Boolean);
+ !ar.length?A("W","#14 Fibre specs","Could not read panels."):pb.length?A("F","#14 Fibre specs",pb.join(" · "),"Percentages must total 100% and name the fibre."):A("P","#14 Fibre specs","Every area totals 100% with the fibre stated.");
+ // 15 dims
+ const dm=H&&H.dims.match(/(\d+)\s*@\s*([\d.]+)\s*m\s*x\s*([\d.]+)\s*m\s*=\s*([\d.]+)\s*m/i);let w=0,l=0;
+ if(!dm)A("W","#15 Dimensions / area","Could not read quantity & dimensions.");
+ else{w=+dm[2];l=+dm[3];const c=(w*l).toFixed(2);c===(+dm[4]).toFixed(2)?A("P","#15 Dimensions / area",`${w} × ${l} = ${(w*l).toFixed(4)} → ${c}m² matches the stated ${dm[4]}m².`):A("F","#15 Dimensions / area",`${w} × ${l} = ${c}m² but the board says ${dm[4]}m².`,"Correct the area.")}
+ A("W","#16 Scale",H&&H.scale?`Scale “${esc(H.scale)}” is present. Human check required to confirm it is the right scale.`:"Scale is missing from the top note.");
+ if(!H||!H.scale)R[R.length-1].s="F";
+ // 17 line
+ const la=ar.filter(a=>/line area/i.test(a.text));
+ if(!la.length)A("N","#17 Line widths","No panel identifies a line area (artwork is not used to infer this).");
+ else{const b2=la.filter(a=>!/\d+(?:\.\d+)?\s*mm\s*(?:line\s*)?width|line width\s*[:\-]?\s*\d/i.test(a.text)).map(a=>a.num);
+  b2.length?A("F","#17 Line widths","Line area with no line width: area(s) "+b2.join(", "),"Add the line width in mm."):A("P","#17 Line widths","All line areas state a width.")}
+ // 18 border
+ if(/border/i.test(T))/border[^.]*\d+\s*mm/i.test(T)?A("P","#18 Border widths","Border wording found with a width."):A("F","#18 Border widths","Border mentioned but no width found.","Add the border width.");
+ else A("W","#18 Border widths","No border wording on the board. Look at the artwork to confirm there is no border.");
+ A(/close.?up|\bdetail\b/i.test(T)?"W":"N","#19 Close-up scale",/close.?up|\bdetail\b/i.test(T)?"A close-up/detail is mentioned – check its scale.":"No close-up detail on the board.");
+ // 20 weight
+ const wk=H&&H.pile.match(/([\d.]+)\s*kg\/m2/i),ex={SALL:"3.50",MWI:"3.00"};
+ if(!B.type)A("W","#20 Weight",`Cannot verify – project type not entered. Board says ${wk?wk[1]+"kg/m2":"no weight"} (correct only for SALL if 3.50).`);
+ else if(B.type==="NEPJW")/standard handknot weight/i.test(H?H.pile:"")?A("P","#20 Weight","“standard handknot weight” is stated."):A("F","#20 Weight","NEPJW needs the standard handknot weight wording.","Add the wording.");
+ else wk&&(+wk[1]).toFixed(2)===ex[B.type]?A("P","#20 Weight",`${wk[1]}kg/m2 is correct for ${B.type}.`):A("F","#20 Weight",`${B.type} needs ${ex[B.type]}kg/m2 but board says ${wk?wk[1]:"nothing"}.`,"Correct the weight.");
+ A(/direction/i.test(T)?"P":"F","#21 Line direction",/direction/i.test(T)?"Direction indicator is present. Whether it points the right way needs a manufacturing check.":"No line-direction indicator found.");
+ // clauses
+ const cl=(t,trig,re,what,unk)=>trig?(re.test(T)?A("P",t,what+" clause present."):A("F",t,what+" clause is required but not found.","Add the "+what+" clause.")):A(unk?"W":"N",t,unk||"Not triggered.");
+ cl("Clause – ombre",B.omb==="yes",/40%/,"ombre",B.omb?null:"Cannot tell if ombre – not entered in the brief fields.");R[R.length-1].s=B.omb==="no"?"N":R[R.length-1].s;
+ cl("Clause – natural fibre",/nettle|hemp|cactus/i.test(zones),/natural fibres including/i,"natural fibre");
+ const rad=/radius corner/i.test(T)||B.shape==="yes";
+ cl("Clause – shape",rad,/shape intent will be maintained/i,"shape",B.shape?null:"Shape not entered and no shape wording found – check artwork.");R[R.length-1].s=B.shape==="no"?"N":R[R.length-1].s;
+ const a100=ar.some(a=>a.fibres.length===1&&/art-?silk/.test(a.fibres[0].fibre));
+ cl("Clause – 100% artsilk",a100,/does not recommend the use of 100% art-?silk/i,"100% artsilk");
+ /no carving/i.test(T)?A("N","Carving","Board states “no carving”."):A("W","Carving","No carving statement – check the artwork for carving (human check).");
+ const inl=B.inst==="inlaid"||/inlaid|\bjoin/i.test(H?H.app:"");
+ cl("Clause – installation",inl,/rug recess/i,"installation");if(inl)A("W","Inlaid – oversize","Inlaid installation: human must confirm excess design for oversize is accounted for.");
+ // indigenous
+ const dn=n((H?H.design:"").split("/").pop().split(/\s+by\s+/i)[0]),ky=Object.keys(IND);
+ if(IND[dn]){const a=IND[dn];new RegExp("©\\s*"+a,"i").test(T)?A("P","Indigenous artist","“"+dn+"” is by "+a+" and the copyright names her."):A("F","Indigenous artist","“"+dn+"” is by "+a+" but the copyright clause doesn’t name her.","Put the artist name in the copyright clause.")}
+ else{const near=ky.find(k=>dn&&(k.includes(dn)||dn.includes(k.split(" ")[0])));near?A("W","Indigenous artist",`“${dn}” isn’t an exact match in the reference table but looks close to “${near}” (${IND[near]}). Confirm the design name and copyright.`):A("N","Indigenous artist","Design not in the reference table.")}
+ // SG
+ if(B.sg==="yes"){const f=/^SG/i.test(fname),pty=/Pty\s+Ltd/i.test(T);f&&!pty?A("P","Singapore","SG file code and “Pte Ltd”."):A("F","Singapore",[!f&&"filename doesn’t start with SG",pty&&"“Pty Ltd” must be “Pte Ltd”"].filter(Boolean).join(" · "),"Fix for Singapore.")}
+ else A(B.sg==="no"?"N":"W","Singapore",B.sg==="no"?"Not a Singapore project.":"Cannot verify – Singapore status not entered. Board shows “Pty Ltd”.");
+ // commercial
+ const app=B.app||"";
+ if(app==="commercial"){const iss=[];if(a100)iss.push("100% artsilk not allowed");
+  if((B.inst||"freelaid")==="freelaid"&&!ar.some(a=>a.pile&&a.pile.type==="cut"&&a.pile.mm===9))iss.push("freelaid needs a 9mm cut base – none found");
+  iss.length?A("F","Commercial rules",iss.join(" · "),"Fix per commercial rules."):A("W","Commercial rules","No 100% artsilk. Human must confirm majority pile is 9mm and freelaid edges are tapered (inlaid: none).")}
+ else A(app==="residential"?"N":"W","Commercial rules",app==="residential"?"Residential – not applicable.":"Application not entered – commercial rules can’t be ruled in or out.");
+ // airfreight
+ if(B.air==="yes"){l>=3.5&&w>=3.5?A("W","Airfreight","Both sides ≥ 3.50m: a cut line is required, cut width must be < 3.50m and not cross loop pile. Human check."):A("P","Airfreight","One side is under 3.50m – dimension requirement met.")}
+ else A("N","Airfreight",B.air==="no"?"Not airfreight.":(w&&l&&(w<3.5||l<3.5)?"Airfreight not entered, but one side is under 3.50m so no cut line is needed either way.":"Airfreight not entered – check the brief."));
+ return R}
+
+function render(R,D){
+ const c={F:0,W:0,P:0,N:0};R.forEach(r=>c[r.s]++);
+ const v=c.F?["F","FAIL – fix before sign-off"]:c.W?["W","HUMAN CHECK REQUIRED"]:["P","PASS – ready to sign off"];
+ const L={F:"FAIL",W:"CHECK",P:"PASS",N:"N/A"};
+ const card=r=>`<div class="card ${r.s}"><span class="b ${r.s}">${L[r.s]}</span><div><b>${r.t}</b><p>${r.m}</p>${r.x?`<p class="fix">→ ${r.x}</p>`:""}</div></div>`;
+ const sec=(s,h,open)=>{const a=R.filter(r=>r.s===s);return a.length?`<details ${open?"open":""}><summary>${h} (${a.length})</summary>${a.map(card).join("")}</details>`:""};
+ const H=D.top||{};
+ return `<div class="ban ${v[0]}">${v[1]}</div>
+ <div class="chips"><span class="chip F">${c.F} fail</span><span class="chip W">${c.W} check</span><span class="chip P">${c.P} pass</span><span class="chip N">${c.N} n/a</span></div>
+ ${sec("F","1. fix these",1)}${sec("W","2. a person needs to check these",1)}${sec("P","passed")}${sec("N","not applicable")}
+ <details><summary>what the checker read (verify it matches the board)</summary><div class="box">
+ <table>${Object.entries(H).map(([k,x])=>`<tr><th>${k}</th><td>${esc(x)}</td></tr>`).join("")}</table>
+ <p><b>palette:</b> ${D.pal.map(p=>esc(p.name+" "+p.code)).join(" · ")}</p>
+ <table><tr><th>area</th><th>fibres</th><th>pile</th></tr>${D.areas.map(a=>`<tr><td>${a.num}</td><td>${a.fibres.map(f=>f.pct+"% "+esc(f.name+" "+f.code)+" ("+esc(f.fibre)+")").join("<br>")}</td><td>${a.pile?a.pile.mm+"mm "+a.pile.type:"–"}</td></tr>`).join("")}</table>
+ <p class="mu">artwork callouts top→bottom: ${D.callouts.join(", ")}</p></div></details>
+ <p class="mu">The checker never judges scale, line direction, arrow placement, artwork carving or whether the design is correct – those always need a person.</p>`}
+
+if(typeof document!=="undefined"){
+ let file=null;const $=s=>document.querySelector(s),dz=$("#drop");
+ pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+ const pick=f=>{if(f){file=f;$("#fn").textContent=f.name;$("#go").disabled=false}};
+ dz.onclick=()=>$("#file").click();$("#file").onchange=e=>pick(e.target.files[0]);
+ dz.ondragover=e=>{e.preventDefault();dz.classList.add("on")};dz.ondragleave=()=>dz.classList.remove("on");
+ dz.ondrop=e=>{e.preventDefault();dz.classList.remove("on");pick(e.dataTransfer.files[0])};
+ const pdfText=async f=>{const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let t="";for(let p=1;p<=pdf.numPages;p++){(await(await pdf.getPage(p)).getTextContent()).items.forEach(i=>{t+=i.str+(i.hasEOL?"\n":" ")});t+="\n"}return t};
+ const NM={spec:"specifier / project",design:"design name",app:"application",inst:"installation",fibre:"fibre",type:"project type"};
+ $("#rb").onclick=async()=>{
+  try{$("#bs").textContent="reading…";let t=$("#bt").value+"\n";for(const f of $("#bf").files)t+=await pdfText(f)+"\n";
+   if(t.trim().length<20){$("#bs").textContent="No text found. Scanned briefs can’t be read; paste the text or fill the fields by hand.";return}
+   const f=briefFields(t),ks=Object.keys(f);
+   ks.forEach(k=>{const el=$("#b_"+k);el.value=f[k];el.classList.add("auto")});
+   const miss=Object.keys(NM).filter(k=>!f[k]).map(k=>NM[k]);
+   $("#bs").innerHTML=`<p>Filled ${ks.length} field(s): ${ks.map(k=>NM[k]||k).join(", ")||"none"}.</p>${miss.length?`<p>Not found, please enter: ${miss.join(", ")}.</p>`:""}<p>These are read from keywords, so confirm the highlighted fields before running.</p><details><summary>brief text that was read</summary><pre style="white-space:pre-wrap">${esc(t.slice(0,3000))}</pre></details>`;
+  }catch(e){$("#bs").textContent="Could not read the brief ("+e.message+")."}};
+ $("#go").onclick=async()=>{
+  $("#st").textContent="reading pdf…";$("#out").innerHTML="";
+  try{const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise,pg=await pdf.getPage(1),tc=await pg.getTextContent();
+   const items=tc.items.filter(i=>i.str.trim()).map(i=>({s:i.str.trim(),x:i.transform[4],y:i.transform[5]}));
+   let na=0;(await pg.getAnnotations()).forEach(a=>{const s=String(a.contents||a.fieldValue||"").replace(/\s*\n\s*/g," ").trim();if(s&&a.rect){items.push({s,x:a.rect[0],y:a.rect[3]});na++}});
+   const B={};["spec","design","app","inst","fibre","type","poms","sg","air","omb","shape"].forEach(k=>B[k]=$("#b_"+k).value.trim());
+   B.app=n(B.app);B.inst=n(B.inst);
+   const D=parse(items,pg.view[2],pg.view[3]);$("#out").innerHTML=render(run(D,B,file.name),D);$("#st").textContent=items.length+" text items read"+(na?" (incl. "+na+" comment/field entries)":"")+". "+(pdf.numPages>1?"Only page 1 was checked ("+pdf.numPages+" pages).":"");$("#pr").style.display="";
+  }catch(e){$("#st").textContent="Could not read this PDF ("+e.message+"). It may be a scan – the checker needs a text-based PDF."}};
+}
+</script></main></body></html>
